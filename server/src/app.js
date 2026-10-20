@@ -16,7 +16,7 @@ app.use(
   }),
 );
 app.use(cookieParser());
-app.use(helmet());
+// app.use(helmet());
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
