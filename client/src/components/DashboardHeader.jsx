@@ -22,7 +22,7 @@ export default function DashboardHeader({ user }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#070908]/90 backdrop-blur-xl py-4">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#070908]/90 backdrop-blur-xl py-2">
       <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
         {/* Brand */}
         <Link to="/onboarding" className="flex items-center gap-3">
