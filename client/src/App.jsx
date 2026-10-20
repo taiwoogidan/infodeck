@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router";
 import VerifyEmail from "./pages/VerifyEmail";
 import ChangeEmail from "./pages/ChangeEmail";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 export default function App() {
   return (
     <>
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/verify" element={<VerifyEmail />} />
         <Route path="/change-email" element={<ChangeEmail />} />
+        <Route path="/onboarding" element={<Dashboard />} />
       </Routes>
     </>
   );

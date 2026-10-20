@@ -8,7 +8,7 @@ export const redis = createClient({
 
 redis.on("error", (error) => {
   console.error(`Redis error: ${error}`);
-  process.exit(1);
+  // process.exit(1);
 });
 
 export default function connectRedis() {

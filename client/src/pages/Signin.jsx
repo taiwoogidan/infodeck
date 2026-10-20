@@ -25,8 +25,7 @@ export default function Signin() {
   const navigate = useNavigate();
 
   const formIsValid =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
-    password.length > 0;
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && password.length > 0;
 
   const signinRequest = async (e) => {
     e.preventDefault();
@@ -50,7 +49,7 @@ export default function Signin() {
             email: email.trim().toLowerCase(),
             password,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -65,7 +64,7 @@ export default function Signin() {
       setEmail("");
       setPassword("");
 
-      navigate("/dashboard");
+      navigate("/onboarding");
     } catch (err) {
       console.error("Signin error:", err);
       setError("Unable to connect to the server. Please try again.");
@@ -106,10 +105,7 @@ export default function Signin() {
                 aria-label="Infodeck home"
                 className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10 text-emerald-300 shadow-lg shadow-emerald-950/30 transition hover:scale-105 hover:bg-emerald-400/[0.15]"
               >
-                <FontAwesomeIcon
-                  icon={faLayerGroup}
-                  className="text-2xl"
-                />
+                <FontAwesomeIcon icon={faLayerGroup} className="text-2xl" />
               </Link>
 
               <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300">
@@ -218,18 +214,14 @@ export default function Signin() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword((prev) => !prev)
-                    }
+                    onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
                     aria-pressed={showPassword}
                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-neutral-500 transition hover:bg-white/[0.05] hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
                   >
-                    <FontAwesomeIcon
-                      icon={showPassword ? faEyeSlash : faEye}
-                    />
+                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                   </button>
                 </div>
               </div>
