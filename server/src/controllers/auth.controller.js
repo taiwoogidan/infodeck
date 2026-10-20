@@ -75,7 +75,7 @@ export const changeEmail = async (req, res) => {
   try {
     // console.log(req.body);
     const user = await changeEmailService(req.body);
-    const redis = await redisService(user.email)
+    const redis = await redisService(user.email);
     const resend = await resendSignupService(user.email, redis);
     res.status(200).json({
       success: true,
