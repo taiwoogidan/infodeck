@@ -48,14 +48,14 @@ export const signin = async (req, res) => {
     const { accessToken, refreshToken } = await generateToken(user);
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      // secure: true,
+      secure: true,
       sameSite: "none",
       maxAge: 15 * 60 * 1000,
       path: "/",
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      // secure: true,
+      secure: true,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
