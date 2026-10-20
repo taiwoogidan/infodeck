@@ -1,6 +1,7 @@
 import express from "express";
 import {
   changeEmail,
+  logout,
   signin,
   signup,
   verify,
@@ -11,5 +12,6 @@ router.post("/signup", signup);
 router.post("/verify", verify);
 router.post("/signin", signin);
 router.patch("/change-email", changeEmail);
+router.post("/logout", logout);
 
 export default router;

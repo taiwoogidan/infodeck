@@ -17,8 +17,18 @@ export default function DashboardHeader({ user }) {
 
   const handleSignOut = async () => {
     // Connect this to your backend logout endpoint
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER}/api/auth/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
+    const data = await response.json();
     // when your logout route is available.
-    navigate("/signin", { replace: true });
+    if (response.ok) {
+      navigate("/signin", { replace: true });
+    }
   };
 
   return (
