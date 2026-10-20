@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import helmet from "helmet";
+// import helmet from "helmet";
 import authRouter from "./routes/auth.route.js";
 import profileRouter from "./routes/profile.routes.js";
 import dotenv from "dotenv";
@@ -16,7 +16,7 @@ app.use(
   }),
 );
 app.use(cookieParser());
-app.use(helmet());
+// app.use(helmet());
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
