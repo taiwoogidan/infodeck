@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -57,12 +56,10 @@ export default function Signup() {
   ];
 
   const passwordIsValid =
-    passwordRules.every((rule) => rule.valid) &&
-    !/\s/.test(password);
+    passwordRules.every((rule) => rule.valid) && !/\s/.test(password);
 
   const passwordsMatch =
-    confirmPassword.length > 0 &&
-    password === confirmPassword;
+    confirmPassword.length > 0 && password === confirmPassword;
 
   const formIsValid =
     fname.trim().length > 0 &&
@@ -95,15 +92,13 @@ export default function Signup() {
             email: email.trim().toLowerCase(),
             password,
           }),
-        }
+        },
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(
-          data.message || "Unable to create your account."
-        );
+        setError(data.message || "Unable to create your account.");
         return;
       }
 
@@ -121,14 +116,12 @@ export default function Signup() {
       setPassword("");
       setConfirmPassword("");
 
-      navigate("/verify", {
+      navigate("/signin", {
         state: { email: signupEmail },
       });
     } catch (err) {
       console.error("Signup error:", err);
-      setError(
-        "Unable to connect to the server. Please try again."
-      );
+      setError("Unable to connect to the server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -137,8 +130,7 @@ export default function Signup() {
   const inputClass =
     "w-full rounded-xl border border-white/[0.09] bg-[#090b0a] py-3.5 pl-11 pr-4 text-sm text-white outline-none transition duration-200 placeholder:text-zinc-600 hover:border-white/[0.15] focus:border-emerald-400/60 focus:bg-[#0a0d0b] focus:ring-4 focus:ring-emerald-400/[0.08]";
 
-  const labelClass =
-    "mb-2 block text-sm font-medium text-zinc-300";
+  const labelClass = "mb-2 block text-sm font-medium text-zinc-300";
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#070908] px-4 py-8 text-white selection:bg-emerald-400/30 sm:px-6 sm:py-12">
@@ -162,10 +154,7 @@ export default function Signup() {
           to="/"
           className="mb-6 inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-emerald-400"
         >
-          <FontAwesomeIcon
-            icon={faArrowLeft}
-            className="text-xs"
-          />
+          <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
           Back to home
         </Link>
 
@@ -193,9 +182,7 @@ export default function Signup() {
 
               <div className="mt-5">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.06] px-3 py-1.5 text-xs font-medium text-emerald-300">
-                  <FontAwesomeIcon
-                    icon={faWandMagicSparkles}
-                  />
+                  <FontAwesomeIcon icon={faWandMagicSparkles} />
                   Your knowledge starts here
                 </div>
 
@@ -204,8 +191,8 @@ export default function Signup() {
                 </h1>
 
                 <p className="mt-3 text-sm leading-6 text-zinc-400">
-                  Build your personal library. Keep your discoveries
-                  organized and your ideas within reach.
+                  Build your personal library. Keep your discoveries organized
+                  and your ideas within reach.
                 </p>
               </div>
             </div>
@@ -216,10 +203,7 @@ export default function Signup() {
                 role="status"
                 className="mb-5 flex items-start gap-3 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.07] px-4 py-3 text-sm text-emerald-300"
               >
-                <FontAwesomeIcon
-                  icon={faCircleCheck}
-                  className="mt-0.5"
-                />
+                <FontAwesomeIcon icon={faCircleCheck} className="mt-0.5" />
                 <span>{message}</span>
               </div>
             )}
@@ -230,18 +214,12 @@ export default function Signup() {
                 role="alert"
                 className="mb-5 flex items-start gap-3 rounded-xl border border-red-400/20 bg-red-400/[0.06] px-4 py-3 text-sm leading-6 text-red-300"
               >
-                <FontAwesomeIcon
-                  icon={faCircleExclamation}
-                  className="mt-1"
-                />
+                <FontAwesomeIcon icon={faCircleExclamation} className="mt-1" />
                 <span>{error}</span>
               </div>
             )}
 
-            <form
-              onSubmit={signupRequest}
-              className="space-y-5"
-            >
+            <form onSubmit={signupRequest} className="space-y-5">
               {/* Names */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
@@ -348,18 +326,14 @@ export default function Signup() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword((prev) => !prev)
-                    }
+                    onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
                     aria-pressed={showPassword}
                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-zinc-500 transition hover:bg-white/[0.05] hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
                   >
-                    <FontAwesomeIcon
-                      icon={showPassword ? faEyeSlash : faEye}
-                    />
+                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                   </button>
                 </div>
 
@@ -377,16 +351,12 @@ export default function Signup() {
                       <div
                         key={rule.label}
                         className={`flex items-center gap-2 text-xs transition-colors ${
-                          rule.valid
-                            ? "text-emerald-400"
-                            : "text-zinc-500"
+                          rule.valid ? "text-emerald-400" : "text-zinc-500"
                         }`}
                       >
                         <span
                           className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
-                            rule.valid
-                              ? "bg-emerald-400/15"
-                              : "bg-white/[0.05]"
+                            rule.valid ? "bg-emerald-400/15" : "bg-white/[0.05]"
                           }`}
                         >
                           <FontAwesomeIcon
@@ -408,10 +378,7 @@ export default function Signup() {
 
               {/* Confirm password */}
               <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className={labelClass}
-                >
+                <label htmlFor="confirmPassword" className={labelClass}>
                   Confirm password
                 </label>
 
@@ -428,9 +395,7 @@ export default function Signup() {
                     autoComplete="new-password"
                     placeholder="Enter your password again"
                     value={confirmPassword}
-                    onChange={(e) =>
-                      setConfirmPassword(e.target.value)
-                    }
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`${inputClass} pr-12 ${
                       confirmPassword && !passwordsMatch
                         ? "border-red-400/50 focus:border-red-400 focus:ring-red-400/10"
@@ -438,17 +403,13 @@ export default function Signup() {
                           ? "border-emerald-400/40"
                           : ""
                     }`}
-                    aria-invalid={
-                      confirmPassword.length > 0 && !passwordsMatch
-                    }
+                    aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
                     required
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword((prev) => !prev)
-                    }
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
                     aria-label={
                       showConfirmPassword
                         ? "Hide confirm password"
@@ -458,9 +419,7 @@ export default function Signup() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-zinc-500 transition hover:bg-white/[0.05] hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40"
                   >
                     <FontAwesomeIcon
-                      icon={
-                        showConfirmPassword ? faEyeSlash : faEye
-                      }
+                      icon={showConfirmPassword ? faEyeSlash : faEye}
                     />
                   </button>
                 </div>
@@ -468,16 +427,12 @@ export default function Signup() {
                 {confirmPassword && (
                   <p
                     className={`mt-2 flex items-center gap-2 text-xs ${
-                      passwordsMatch
-                        ? "text-emerald-400"
-                        : "text-red-400"
+                      passwordsMatch ? "text-emerald-400" : "text-red-400"
                     }`}
                   >
                     <FontAwesomeIcon
                       icon={
-                        passwordsMatch
-                          ? faCircleCheck
-                          : faCircleExclamation
+                        passwordsMatch ? faCircleCheck : faCircleExclamation
                       }
                     />
                     {passwordsMatch
@@ -537,9 +492,7 @@ export default function Signup() {
             icon={faShieldHalved}
             className="text-emerald-500/70"
           />
-          <span>
-            Your knowledge, organized. Your account, protected.
-          </span>
+          <span>Your knowledge, organized. Your account, protected.</span>
         </div>
 
         <p className="mt-3 text-center text-[11px] text-zinc-700">

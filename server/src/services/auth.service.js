@@ -82,6 +82,7 @@ export const signinService = async (data) => {
     throw error;
   }
   email = email.trim().toLowerCase();
+  password = password.trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     const error = new Error("Invalid email or password");
@@ -102,11 +103,11 @@ export const signinService = async (data) => {
     throw error;
   }
   const verifyPassword = await argon2.verify(user.password, password);
-  if (user.isVerified == false) {
-    const error = new Error("Account is not verified");
-    error.statusCode = 400;
-    throw error;
-  }
+  // if (user.isVerified == false) {
+  //   const error = new Error("Account is not verified");
+  //   error.statusCode = 400;
+  //   throw error;
+  // }
   if (!verifyPassword) {
     const error = new Error("Invalid email or password");
     error.statusCode = 404;

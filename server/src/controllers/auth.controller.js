@@ -8,6 +8,7 @@ import { redisService, redisVerifyService } from "../services/otp.service.js";
 import { resendSignupService } from "../services/email.service.js";
 import { generateToken } from "../utils/generateToken.js";
 import dotenv from "dotenv";
+import { storeRefreshToken } from "../utils/storeRefreshToken.js";
 dotenv.config();
 export const signup = async (req, res) => {
   try {
@@ -61,6 +62,7 @@ export const signin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
+    await storeRefreshToken(user, refreshToken);
     res.status(200).json({
       success: true,
       message: "Signin successful",
@@ -104,7 +106,6 @@ export const logout = async (req, res, next) => {
 
     res.clearCookie("accessToken", cookieOptions);
     res.clearCookie("refreshToken", cookieOptions);
-
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
