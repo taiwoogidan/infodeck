@@ -11,6 +11,7 @@ import {
   faPenToSquare,
   faCompass,
 } from "@fortawesome/free-solid-svg-icons";
+import { apiFetch } from "../utils/apiFetch";
 
 import DashboardHeader from "../components/DashboardHeader";
 
@@ -26,25 +27,34 @@ export default function Dashboard() {
 
     const getProfile = async () => {
       try {
-        const response = await fetch(
+        const response = await apiFetch(
           `${import.meta.env.VITE_SERVER}/api/profile`,
           {
             method: "GET",
-            credentials: "include",
             signal: controller.signal,
           },
         );
 
-        const data = await response.json();
+        if (controller.signal.aborted) return;
 
-        if (!response.ok) {
+        if (response.status === 401) {
           navigate("/signin", { replace: true });
           return;
         }
 
-        // Supports either { fname: "..." } or { user: { fname: "..." } }
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(
+            data.message ||
+              "We couldn't load your workspace. Please try again.",
+          );
+          return;
+        }
+
         const profile = data.user ?? data;
         setUser(profile);
+        setError("");
       } catch (error) {
         if (error.name === "AbortError") return;
 
@@ -67,9 +77,7 @@ export default function Dashboard() {
       <div className="flex min-h-screen items-center justify-center bg-[#070908]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-emerald-400" />
-          <p className="text-sm text-gray-500">
-            Preparing your workspace...
-          </p>
+          <p className="text-sm text-gray-500">Preparing your workspace...</p>
         </div>
       </div>
     );
@@ -102,8 +110,8 @@ export default function Dashboard() {
 
               <p className="mt-4 max-w-xl text-sm leading-7 text-gray-400 sm:text-base">
                 Your ideas deserve a place to grow. Capture what you learn,
-                organize your knowledge, and share your best insights with
-                the world.
+                organize your knowledge, and share your best insights with the
+                world.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -205,7 +213,9 @@ export default function Dashboard() {
         {/* Quick actions */}
         <section className="mt-12">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold">Pick up where you left off</h2>
+            <h2 className="text-xl font-semibold">
+              Pick up where you left off
+            </h2>
             <p className="mt-1 text-sm text-gray-500">
               What would you like to do today?
             </p>
@@ -258,8 +268,8 @@ export default function Dashboard() {
             </h3>
 
             <p className="mt-2 max-w-md text-sm leading-6 text-gray-500">
-              Create your first note, keep your ideas organized, and build
-              a knowledge library that grows with you.
+              Create your first note, keep your ideas organized, and build a
+              knowledge library that grows with you.
             </p>
 
             <Link

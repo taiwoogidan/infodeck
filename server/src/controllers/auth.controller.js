@@ -1,5 +1,6 @@
 import {
   changeEmailService,
+  refreshTokenService,
   signinService,
   signupService,
   verifyService,
@@ -9,6 +10,7 @@ import { resendSignupService } from "../services/email.service.js";
 import { generateToken } from "../utils/generateToken.js";
 import dotenv from "dotenv";
 import { storeRefreshToken } from "../utils/storeRefreshToken.js";
+import User from "../models/User.js";
 dotenv.config();
 export const signup = async (req, res) => {
   try {
@@ -112,5 +114,34 @@ export const logout = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { generateNewAccessToken, generateNewRefreshToken, dataId } =
+      await refreshTokenService(req.cookies.refreshToken);
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("accessToken", generateNewAccessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
+    res.cookie("refreshToken", generateNewRefreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+    await storeRefreshToken(dataId, generateNewRefreshToken);
+    res.status(200).json({
+      success: true,
+      message: "Refresh Token Rotated",
+    });
+  } catch (error) {
+    console.error(error.message);
   }
 };

@@ -2,6 +2,7 @@ import express from "express";
 import {
   changeEmail,
   logout,
+  refreshToken,
   signin,
   signup,
   verify,
@@ -13,5 +14,6 @@ router.post("/verify", verify);
 router.post("/signin", signin);
 router.patch("/change-email", changeEmail);
 router.post("/logout", logout);
+router.post("/infodeck-refresh", refreshToken);
 
 export default router;
