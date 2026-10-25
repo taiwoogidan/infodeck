@@ -11,6 +11,8 @@ import { generateToken } from "../utils/generateToken.js";
 import dotenv from "dotenv";
 import { storeRefreshToken } from "../utils/storeRefreshToken.js";
 import User from "../models/User.js";
+import RefreshToken from "../models/RefreshToken.js";
+import { deleteRefreshToken } from "../utils/deleteRefreshToken.js";
 dotenv.config();
 export const signup = async (req, res) => {
   try {
@@ -136,6 +138,9 @@ export const refreshToken = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
+    const deleteRefreshToken = await deleteRefreshToken(
+      req.cookies.refreshToken,
+    );
     await storeRefreshToken(dataId, generateNewRefreshToken);
     res.status(200).json({
       success: true,
