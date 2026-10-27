@@ -11,8 +11,8 @@ import {
   faPenToSquare,
   faCompass,
 } from "@fortawesome/free-solid-svg-icons";
-import { apiFetch } from "../utils/apiFetch";
 
+import { apiFetch } from "../utils/apiFetch.js";
 import DashboardHeader from "../components/DashboardHeader";
 
 export default function Dashboard() {
@@ -27,6 +27,9 @@ export default function Dashboard() {
 
     const getProfile = async () => {
       try {
+        setLoading(true);
+        setError("");
+
         const response = await apiFetch(
           `${import.meta.env.VITE_SERVER}/api/profile`,
           {
@@ -35,8 +38,11 @@ export default function Dashboard() {
           },
         );
 
+        // Ignore this request if the component has unmounted.
         if (controller.signal.aborted) return;
 
+        // apiFetch should have attempted token refresh and retried
+        // before returning a final 401 response.
         if (response.status === 401) {
           navigate("/signin", { replace: true });
           return;
@@ -52,14 +58,22 @@ export default function Dashboard() {
           return;
         }
 
+        // Supports APIs returning either { user: {...} }
+        // or the user object directly.
         const profile = data.user ?? data;
+
         setUser(profile);
         setError("");
       } catch (error) {
-        if (error.name === "AbortError") return;
+        if (error.name === "AbortError" || controller.signal.aborted) {
+          return;
+        }
 
         console.error("Profile request failed:", error);
-        setError("We couldn't load your workspace. Please try again.");
+
+        setError(
+          "We couldn't load your workspace. Please check your connection and try again.",
+        );
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -69,7 +83,9 @@ export default function Dashboard() {
 
     getProfile();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }, [navigate]);
 
   if (loading) {
@@ -77,6 +93,7 @@ export default function Dashboard() {
       <div className="flex min-h-screen items-center justify-center bg-[#070908]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-emerald-400" />
+
           <p className="text-sm text-gray-500">Preparing your workspace...</p>
         </div>
       </div>
@@ -91,6 +108,7 @@ export default function Dashboard() {
         {/* Welcome section */}
         <section className="relative overflow-hidden rounded-3xl border border-white/[0.07] bg-[#0d100e] p-7 sm:p-10 lg:p-12">
           <div className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-emerald-400/[0.09] blur-[100px]" />
+
           <div className="pointer-events-none absolute -bottom-32 right-1/3 h-56 w-56 rounded-full bg-emerald-500/[0.05] blur-[90px]" />
 
           <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -149,6 +167,7 @@ export default function Dashboard() {
             className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-400/20 bg-red-400/[0.05] p-4 text-sm text-red-300"
           >
             <span>{error}</span>
+
             <button
               type="button"
               onClick={() => window.location.reload()}
@@ -159,11 +178,12 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Overview heading */}
+        {/* Overview */}
         <section className="mt-12">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-xl font-semibold">Your overview</h2>
+
               <p className="mt-1 text-sm text-gray-500">
                 A quick look at your knowledge workspace.
               </p>
@@ -216,6 +236,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold">
               Pick up where you left off
             </h2>
+
             <p className="mt-1 text-sm text-gray-500">
               What would you like to do today?
             </p>
@@ -240,11 +261,12 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Recent activity placeholder */}
+        {/* Recent activity */}
         <section className="mt-12">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-xl font-semibold">Recently updated</h2>
+
               <p className="mt-1 text-sm text-gray-500">
                 Your latest notes and articles will appear here.
               </p>
@@ -287,6 +309,7 @@ export default function Dashboard() {
           <p>
             © {new Date().getFullYear()} InfoDeck. Your knowledge, organized.
           </p>
+
           <p>Built for curious minds.</p>
         </footer>
       </main>
@@ -300,6 +323,7 @@ function OverviewCard({ icon, label, value, description, iconStyle }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-gray-400">{label}</p>
+
           <p className="mt-3 text-3xl font-bold tracking-tight">{value}</p>
         </div>
 
@@ -331,6 +355,7 @@ function QuickAction({ to, icon, title, description, action }) {
 
       <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-emerald-400">
         {action}
+
         <FontAwesomeIcon
           icon={faArrowRight}
           className="transition group-hover:translate-x-1"

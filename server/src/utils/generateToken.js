@@ -12,5 +12,5 @@ export const generateToken = async (data) => {
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: "7d" },
   );
-  return { accessToken, refreshToken, data };
+  return { accessToken, refreshToken };
 };

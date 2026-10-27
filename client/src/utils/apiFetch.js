@@ -1,53 +1,79 @@
 
 const API_URL = import.meta.env.VITE_SERVER;
 
-// Prevent multiple simultaneous requests from refreshing the token
-// independently.
 let refreshPromise = null;
 
 async function refreshAccessToken() {
-  if (!refreshPromise) {
-    refreshPromise = fetch(`${API_URL}/api/auth/infodeck-refresh`, {
-      method: "POST",
-      credentials: "include",
-    }).finally(() => {
-      refreshPromise = null;
-    });
-  }
-
-  try {
-    const response = await refreshPromise;
-    return response.ok;
-  } catch (error) {
-    console.error("Token refresh request failed:", error);
+  if (!API_URL) {
+    console.error("[Auth] VITE_SERVER is not configured.");
     return false;
   }
+
+  if (!refreshPromise) {
+    console.log("[Auth] Starting refresh request...");
+
+    refreshPromise = (async () => {
+      try {
+        const url = `${API_URL}/api/auth/infodeck-refresh`;
+
+        console.log("[Auth] Refresh URL:", url);
+
+        const response = await fetch(url, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        console.log("[Auth] Refresh status:", response.status);
+
+        const body = await response.clone().text();
+        console.log("[Auth] Refresh response body:", body);
+
+        return response.ok;
+      } catch (error) {
+        console.error("[Auth] Refresh failed:", error);
+        return false;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+
+  return refreshPromise;
 }
 
 export async function apiFetch(url, options = {}) {
-  // Send the original request with cookies.
+  console.log("[API] Sending request:", url);
+
   const response = await fetch(url, {
     ...options,
     credentials: "include",
   });
 
-  // Only attempt a refresh after an unauthorized response.
+  console.log("[API] Initial status:", response.status);
+
   if (response.status !== 401) {
     return response;
   }
 
-  // Ask the backend to validate the refresh-token cookie and
-  // issue a new access token.
+  console.log("[Auth] 401 detected. Refreshing token...");
+
   const refreshed = await refreshAccessToken();
 
+  console.log("[Auth] Refresh succeeded:", refreshed);
+
   if (!refreshed) {
+    console.warn("[Auth] Refresh failed. Returning original response.");
     return response;
   }
 
-  // Retry the original request once with the newly issued cookie.
-  // The browser attaches the updated cookie automatically.
-  return fetch(url, {
+  console.log("[API] Retrying original request:", url);
+
+  const retryResponse = await fetch(url, {
     ...options,
     credentials: "include",
   });
+
+  console.log("[API] Retry status:", retryResponse.status);
+
+  return retryResponse;
 }

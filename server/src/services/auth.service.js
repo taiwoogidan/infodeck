@@ -6,6 +6,7 @@ import { redisVerifyService } from "./otp.service.js";
 import { redis } from "../config/redis.js";
 import dotenv from "dotenv";
 import { generateToken } from "../utils/generateToken.js";
+import { generateNewToken } from "../utils/generateNewToken.js";
 dotenv.config();
 
 export const signupService = async (data) => {
@@ -192,7 +193,10 @@ export const refreshTokenService = async (data) => {
     error.statusCode = 401;
     throw error;
   }
-  const { generateNewAccessToken, generateNewRefreshToken, dataId } =
-    await generateToken(decoded.userId);
-  return { generateNewAccessToken, generateNewRefreshToken, dataId };
+  const { newAccessToken, newRefreshToken } = await generateNewToken(
+    storedToken.user,
+  );
+
+  const userId = storedToken.user;
+  return { newAccessToken, newRefreshToken, userId };
 };

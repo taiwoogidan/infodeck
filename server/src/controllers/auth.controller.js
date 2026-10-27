@@ -8,11 +8,13 @@ import {
 import { redisService, redisVerifyService } from "../services/otp.service.js";
 import { resendSignupService } from "../services/email.service.js";
 import { generateToken } from "../utils/generateToken.js";
-import dotenv from "dotenv";
 import { storeRefreshToken } from "../utils/storeRefreshToken.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 import User from "../models/User.js";
 import RefreshToken from "../models/RefreshToken.js";
-import { deleteRefreshToken } from "../utils/deleteRefreshToken.js";
+import { refreshTokenDelete } from "../utils/refreshTokenDelete.js";
 dotenv.config();
 export const signup = async (req, res) => {
   try {
@@ -107,8 +109,7 @@ export const logout = async (req, res, next) => {
       sameSite: "none",
       path: "/",
     };
-
-    res.clearCookie("accessToken", cookieOptions);
+    const token = res.clearCookie("accessToken", cookieOptions);
     res.clearCookie("refreshToken", cookieOptions);
     return res.status(200).json({
       success: true,
@@ -121,27 +122,26 @@ export const logout = async (req, res, next) => {
 
 export const refreshToken = async (req, res) => {
   try {
-    const { generateNewAccessToken, generateNewRefreshToken, dataId } =
+    const { newAccessToken, newRefreshToken, userId } =
       await refreshTokenService(req.cookies.refreshToken);
+    const token = req.cookies.refreshToken;
     const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("accessToken", generateNewAccessToken, {
+    res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: false,
+      sameSite: "lax",
       maxAge: 15 * 60 * 1000,
       path: "/",
     });
-    res.cookie("refreshToken", generateNewRefreshToken, {
+    res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: false,
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
-    const deleteRefreshToken = await deleteRefreshToken(
-      req.cookies.refreshToken,
-    );
-    await storeRefreshToken(dataId, generateNewRefreshToken);
+    // await refreshTokenDelete.findById(token);
+    await storeRefreshToken(userId, newRefreshToken);
     res.status(200).json({
       success: true,
       message: "Refresh Token Rotated",
