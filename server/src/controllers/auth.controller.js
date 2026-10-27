@@ -13,9 +13,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import User from "../models/User.js";
-import RefreshToken from "../models/RefreshToken.js";
 import { refreshTokenDelete } from "../utils/refreshTokenDelete.js";
-dotenv.config();
+import RefreshToken from "../models/RefreshToken.js";
 export const signup = async (req, res) => {
   try {
     const user = await signupService(req.body);
@@ -122,25 +121,25 @@ export const logout = async (req, res, next) => {
 
 export const refreshToken = async (req, res) => {
   try {
-    const { newAccessToken, newRefreshToken, userId } =
+    const { newAccessToken, newRefreshToken, userId, tokenId } =
       await refreshTokenService(req.cookies.refreshToken);
-    const token = req.cookies.refreshToken;
+    // const token = req.cookies.refreshToken;
     const isProduction = process.env.NODE_ENV === "production";
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 15 * 60 * 1000,
       path: "/",
     });
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
-    // await refreshTokenDelete.findById(token);
+    await RefreshToken.findByIdAndDelete(tokenId);
     await storeRefreshToken(userId, newRefreshToken);
     res.status(200).json({
       success: true,

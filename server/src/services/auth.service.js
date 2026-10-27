@@ -198,5 +198,6 @@ export const refreshTokenService = async (data) => {
   );
 
   const userId = storedToken.user;
-  return { newAccessToken, newRefreshToken, userId };
+  const tokenId = storedToken._id;
+  return { newAccessToken, newRefreshToken, userId, tokenId };
 };
